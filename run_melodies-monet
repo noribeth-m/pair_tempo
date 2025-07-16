@@ -3,9 +3,9 @@
 #PBS -N run_melodies-monet
 ### charge account
 #PBS -A P93300043
-### request one chunk of resources with 1 CPU and 10 GB of memory
+### request one chunk of resources with 1 CPU and 40 GB of memory
 #PBS -l select=1:ncpus=1:mem=40GB
-### allow job to run up to 30 minutes
+### allow job to run up to 3 hours
 #PBS -l walltime=03:00:00
 ### route the job to the casper queue
 #PBS -q casper
@@ -19,7 +19,8 @@ conda activate melodies-monet
 #-- USER INPUT
 
 # get list of yaml files 
-yaml_files=(/glade/u/home/nmariscal/melodies-monet/yaml/wrf/202407/control_tempo_l2_hcho_wrf_*.yaml)
+# yaml_files=(/glade/u/home/nmariscal/melodies-monet/pair_tempo/yaml/control_tempo_l2_no2_cesm_fv_*.yaml)
+yaml_files=(/glade/u/home/nmariscal/melodies-monet/pair_tempo/yaml/control_tempo_l2_no2_cesm_fv_20240701.yaml)
 
 #-- END USER INPUT
 
@@ -29,17 +30,19 @@ for file in "${yaml_files[@]}"; do
     echo "Submitting job for: $file"
 
     # extract species and model type from the file name
-    species=$(basename "$file" | cut -d'_' -f3)  
-    model_type=$(basename "$file" | cut -d'_' -f4)  
+    # note: this may need to change dependent on the naming of your yaml file
+    species=$(basename "$file" | cut -d'_' -f2,3,4)  
+    model_type=$(basename "$file" | cut -d'_' -f5,6)  
 
     # create unique job name for each config file
     job_name="run_mm_$(basename ${file%.*})"
     
     qsub -N "${job_name}" \
          -v "CONFIG_FILE=${file},SPECIES=${species},MODEL_TYPE=${model_type}" \
-         -o "logs/${job_name}.out" \
-         -e "logs/${job_name}.err" \
+         -o "/glade/u/home/nmariscal/melodies-monet/pair_tempo/logs/${job_name}.out" \
+         -e "/glade/u/home/nmariscal/melodies-monet/pair_tempo/logs/${job_name}.err" \
          << EOF
+
 #!/bin/bash -l
 #PBS -A P93300043
 #PBS -l select=1:ncpus=1:mem=40GB
@@ -49,6 +52,6 @@ for file in "${yaml_files[@]}"; do
 source /glade/u/apps/opt/conda/etc/profile.d/conda.sh
 conda activate melodies-monet
 
-python /glade/u/home/nmariscal/pair_tempo_model.py "\${CONFIG_FILE}" "\${SPECIES}" "\${MODEL_TYPE}"
+python /glade/u/home/nmariscal/melodies-monet/pair_tempo/pair_tempo_model.py "\${CONFIG_FILE}" "\${SPECIES}" "\${MODEL_TYPE}"
 EOF
 done

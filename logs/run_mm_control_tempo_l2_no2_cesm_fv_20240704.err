@@ -1,0 +1,8 @@
+2025-07-16 15:17:24,078 - INFO - Starting Script...
+2025-07-16 15:17:24,078 - INFO - Reading Control File: /glade/u/home/nmariscal/melodies-monet/pair_tempo/yaml/control_tempo_l2_no2_cesm_fv_20240704.yaml
+2025-07-16 15:17:24,159 - INFO - Opening Models!
+/glade/u/home/nmariscal/melodies-monet/monetio/monetio/models/_cesm_fv_mm.py:44: UserWarning: 3D data processing is still experimental in CESM-FV (CAM-Chem), and has not been properly tested. Use at own risk.
+  warnings.warn(
+/glade/u/home/nmariscal/melodies-monet/monetio/monetio/models/_cesm_fv_mm.py:274: UserWarning: P0 not in netcdf keys, assuming 100_000 Pa
+  warnings.warn("P0 not in netcdf keys, assuming 100_000 Pa")
+2025-07-16 15:17:57,925 - ERROR - Unsupported model type: no2

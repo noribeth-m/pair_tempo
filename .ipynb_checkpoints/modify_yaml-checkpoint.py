@@ -12,33 +12,25 @@ yaml.indent(mapping=2, sequence=4, offset=2)
 # specify species and model type
 species = 'no2'     # 'no2' or 'hcho'
 model_type = 'cesm_fv'   # 'cesm_fv' or 'wrf' are the only tested options for now
-
-# specify satellite name for TEMPO data
-species_sat_name = {
-    'no2': 'NO2',
-    'hcho': 'HCHO'
-}
-
-# specify default configuration file (i.e., YAML template)
-default_config_file = f"/glade/u/home/nmariscal/melodies-monet/pair_tempo/templates/control_tempo_l2_{species}_{model_type}_template.yaml"
+default_config_file = f"/glade/u/home/nmariscal/melodies-monet/yaml/control_tempo_l2_{species}_{model_type}.yaml"
 
 # specify date parameters
 start_date = datetime(2024, 7, 1)   # first day to process
-num_days = 6                       # number of days to process (consecutive)
+num_days = 5                       # number of days to process (consecutive)
 
 # paths to paired output directory (should be the same for all files)
 # !!! needs to be created before running this script !!!
 output_dir_pathname = '/glade/derecho/scratch/nmariscal/tempo_files/cesm-fv/202407/'
 
 # path to TEMPO data
-obs_path = f"/glade/campaign/acom/acom-da/sma/TEMPO_{species_sat_name[species]}_V03"
+obs_path = '/glade/campaign/acom/acom-da/sma/TEMPO_HCHO_V03'
 
 # path to model data
 model_path = '/glade/derecho/scratch/gaubert/tempo/merge'
 model_file = 'f.e22.FCnudged.ne0CONUSne30x8_ne0CONUSne30x8_mt12.musica_cams_mosaic.003.cam.h1'
 
 # needs to be created before running this script
-save_filepath = '/glade/u/home/nmariscal/melodies-monet/pair_tempo/yaml'
+save_filepath = '/glade/u/home/nmariscal/melodies-monet/yaml/tests'
 
 #-- END USER MODIFICATIONS
 
@@ -73,18 +65,18 @@ for day_offset in range(num_days):
     # update 'obs' section
     if species == 'no2':
         tempo_l2_key = 'tempo_l2_no2'
-        # tempo_l2_obs_name = 'TEMPO_NO2_L2_V03'
+        tempo_l2_obs_name = 'TEMPO_NO2_L2_V03'
     elif species == 'hcho': 
         tempo_l2_key = 'tempo_l2_hcho'
-        # tempo_l2_obs_name = 'TEMPO_HCHO_L2_V03'
+        tempo_l2_obs_name = 'TEMPO_HCHO_L2_V03'
     else:
         raise ValueError("Species must be either 'no2' or 'hcho'.")
-    new_config['obs'][tempo_l2_key]['filename'] = f"{obs_path}/TEMPO_{species_sat_name[species]}_L2_V03_{ymd_current_format}*_S*"
+    new_config['obs'][tempo_l2_key]['filename'] = f"{obs_path}/{tempo_l2_obs_name}_{ymd_current_format}*_S*"
 
     # update 'model' section
     new_config['model'][model_type]['files'] = \
-        f'{model_path}/{model_file}.{iso_prev_format}-03600.nc', \
-        f'{model_path}/{model_file}.{iso_current_format}-03600.nc'
+        f'{model_path}/{model_file}.{iso_prev_format}-*.nc', \
+        f'{model_path}/{model_file}.{iso_current_format}-*.nc'
      
     #-- save new configuration file
     save_filename = f"{save_filepath}/control_{tempo_l2_key}_{model_type}_{ymd_current_format}.yaml"
