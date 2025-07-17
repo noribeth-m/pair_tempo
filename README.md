@@ -1,6 +1,10 @@
 This folder contains the necessary scripts for pairing model output with TEMPO NO2 and HCHO using MELODIES-MONET (https://github.com/NCAR/MELODIES-MONET). 
 The purpose of creating these scripts was to be able to pair model output with TEMPO for longer periods of time. 
 
+Note: The idea for these scripts are for them to be used with data on a structured grid (i.e., CAM-chem, regridded MUSICAv0) in order to pair with TEMPO NO2 and HCHO columns. 
+
+For the tropospheric column calculation, in order to calculate the layer thickness (dz_m), temperature (T), surface pressure (PS), surface geopotential (PHIS), and hybrid levels at the interface (hyai, hybi) need to be provided. PHIS and T are used in the calculation of the hydrostatic height, and PS, hyai and hybi are used to calculate the pressure at the interface. If PHIS, hyai, and hybi are not included in the dataset, the dry pressure difference between levels (PDELDRY) can be used in the calculation of the layer thickness.
+
 Contents:
     1. modify_yaml.py
     2. pair_tempo_model.py
